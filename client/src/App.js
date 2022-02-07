@@ -1,7 +1,8 @@
 import React from 'react';
+import Homepage from './pages/Homepage';
 
 function App() {
-  return <h1>tomper-chat</h1>;
+  return <Homepage />;
 }
 
 export default App;
