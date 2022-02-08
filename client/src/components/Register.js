@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useUserContext } from '../context/userContext';
 import {
   FormControl,
   FormLabel,
@@ -7,6 +8,7 @@ import {
   InputRightElement,
   VStack,
   Button,
+  useToast,
 } from '@chakra-ui/react';
 
 const initialCredential = {
@@ -14,12 +16,16 @@ const initialCredential = {
   email: '',
   password: '',
   confirmPassword: '',
-  profilePicture: '',
+  avatar: '',
 };
 
 function Register() {
+  const { register } = useUserContext();
+
   const [credentials, setCredentials] = useState(initialCredential);
+  const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
+  const toast = useToast();
 
   const handleShow = () => {
     setShow((prev) => {
@@ -33,6 +39,48 @@ function Register() {
     setCredentials((prev) => {
       return { ...prev, [name]: value };
     });
+  };
+
+  const handleImageUpload = (e) => {
+    const name = e.target.name;
+    const file = e.target.files[0];
+    if (!file) {
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      setCredentials((prev) => {
+        return { ...prev, [name]: reader.result };
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSubmit = async () => {
+    const { name, email, password, confirmPassword, avatar } = credentials;
+    if (!name || !email || !password) {
+      return toast({
+        position: 'top',
+        title: 'Invalid Input',
+        description: 'Provide all the credentials',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+    if (password !== confirmPassword) {
+      return toast({
+        position: 'top',
+        title: 'Invalid Input',
+        description: 'Passwords do not match',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+    setLoading(true);
+    await register(name, email, password, avatar);
+    setLoading(false);
   };
 
   return (
@@ -51,6 +99,7 @@ function Register() {
       <FormControl isRequired>
         <FormLabel>Email</FormLabel>
         <Input
+          type='email'
           name='email'
           placeholder='Enter your email'
           variant='filled'
@@ -102,14 +151,15 @@ function Register() {
         <Input
           type='file'
           accept='image/*'
-          name='profilePicture'
+          name='avatar'
           variant='filled'
           focusBorderColor='green.500'
-          value={credentials.profilePicture}
-          onChange={handleChange}
+          onChange={handleImageUpload}
         />
       </FormControl>
-      <Button isFullWidth>Register</Button>
+      <Button isFullWidth isLoading={loading} onClick={handleSubmit}>
+        Register
+      </Button>
     </VStack>
   );
 }

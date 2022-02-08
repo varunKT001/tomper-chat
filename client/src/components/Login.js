@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useUserContext } from '../context/userContext';
 import {
   FormControl,
   FormLabel,
@@ -7,6 +8,7 @@ import {
   InputRightElement,
   VStack,
   Button,
+  useToast,
 } from '@chakra-ui/react';
 
 const initialCredential = {
@@ -15,13 +17,34 @@ const initialCredential = {
 };
 
 function Login() {
+  const { login } = useUserContext();
+
   const [credentials, setCredentials] = useState(initialCredential);
+  const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
+  const toast = useToast();
 
   const handleShow = () => {
     setShow((prev) => {
       return !prev;
     });
+  };
+
+  const handleSubmit = async () => {
+    const { email, password } = credentials;
+    if (!email || !password) {
+      return toast({
+        position: 'top',
+        title: 'Invalid Input',
+        description: 'Provide all the credentials',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+    setLoading(true);
+    await login(email, password);
+    setLoading(false);
   };
 
   const handleChange = (e) => {
@@ -37,6 +60,7 @@ function Login() {
       <FormControl isRequired>
         <FormLabel>Email</FormLabel>
         <Input
+          type='email'
           name='email'
           placeholder='Enter your email'
           variant='filled'
@@ -64,7 +88,9 @@ function Login() {
           </InputRightElement>
         </InputGroup>
       </FormControl>
-      <Button isFullWidth>Login</Button>
+      <Button isFullWidth isLoading={loading} onClick={handleSubmit}>
+        Login
+      </Button>
     </VStack>
   );
 }

@@ -2,9 +2,11 @@ const User = require('../models/userModel');
 const ErrorHandler = require('../utils/ErrorHandler');
 const catchAsyncError = require('../middleware/CatchAsyncErrors');
 const sendToken = require('../utils/jwt');
+const cloudinary = require('../config/cloudinary');
 
+// register new user and upload avatar to cloudinary
 exports.registerUser = catchAsyncError(async (req, res, next) => {
-  const { name, email, password, profilePicture } = req.body;
+  const { name, email, password, avatar } = req.body;
   if (!name || !email || !password) {
     return next(new ErrorHandler('Missing fields', 400));
   }
@@ -12,15 +14,23 @@ exports.registerUser = catchAsyncError(async (req, res, next) => {
   if (exitingUser) {
     return next(new ErrorHandler('User already exist', 400));
   }
+  let tempImage;
+  if (avatar && typeof avatar === 'string') {
+    const { public_id, url } = await cloudinary.uploader.upload(avatar, {
+      folder: 'profile-images',
+    });
+    tempImage = { url, public_id };
+  }
   const user = await User.create({
     name,
     email,
     password,
-    profilePicture,
+    avatar: tempImage,
   });
   sendToken(user, 200, res);
 });
 
+// login existing user
 exports.loginUser = catchAsyncError(async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -35,4 +45,32 @@ exports.loginUser = catchAsyncError(async (req, res, next) => {
     return next(new ErrorHandler('Invalid email or password', 401));
   }
   sendToken(user, 200, res);
+});
+
+// logout current user
+exports.logoutUser = catchAsyncError(async (req, res, next) => {
+  res.cookie('token', null, {
+    expires: new Date(Date.now()),
+    httpOnly: true,
+    sameSite: 'none',
+    secure: true,
+  });
+  res.status(200).json({
+    success: true,
+    message: 'Logged Out',
+  });
+});
+
+// send current user details
+exports.sendCurrentUser = catchAsyncError(async (req, res, next) => {
+  const { token } = req.cookies;
+  if (!token) {
+    return next(new ErrorHandler('User not found', 400));
+  }
+  const decodedData = await jwt.verify(token, process.env.JWT_SECRET);
+  const admin = await Admin.findById(decodedData.id);
+  if (!admin) {
+    new ErrorHandler('User not found', 401);
+  }
+  sendToken(admin, 200, res);
 });

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const validator = require('validator');
 const { DEFAULT_PROFILE_PICTURE } = require('../utils/constants');
 
 const userModel = mongoose.Schema(
@@ -8,20 +9,29 @@ const userModel = mongoose.Schema(
     name: {
       type: String,
       required: [true, 'Please provide a name'],
+      maxlength: [30, 'Name cannot exceed 30 characters'],
+      minLength: [4, 'Name must be atleast 4 characters long'],
     },
     email: {
       type: String,
       required: [true, 'Please provide an email'],
+      validate: [validator.isEmail, 'Please enter a valid email'],
       unique: true,
     },
     password: {
       type: String,
       required: [true, 'Please provide a password'],
+      minLength: [8, 'Password must be atleast 8 characters long'],
       select: false,
     },
-    profilePicture: {
-      type: String,
-      default: DEFAULT_PROFILE_PICTURE,
+    avatar: {
+      url: {
+        type: String,
+        default: DEFAULT_PROFILE_PICTURE,
+      },
+      public_id: {
+        type: String,
+      },
     },
   },
   { timestamps: true }
