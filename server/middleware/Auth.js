@@ -4,14 +4,20 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 
 exports.checkUserAuthentication = catchAsyncErrors(async (req, res, next) => {
-  const { token } = req.cookies;
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return next(
+      new ErrorHandler('Please login again to access this resource', 401)
+    );
+  }
+  const token = authHeader.split(' ')[1];
   if (!token) {
     return next(
       new ErrorHandler('Please login again to access this resource', 401)
     );
   }
   const decodedData = await jwt.verify(token, process.env.JWT_SECRET);
-  const user = await Admin.findById(decodedData.id);
+  const user = await User.findById(decodedData.id);
   if (!user) {
     new ErrorHandler('User not found', 401);
   }

@@ -2,6 +2,7 @@ const User = require('../models/userModel');
 const ErrorHandler = require('../utils/ErrorHandler');
 const catchAsyncError = require('../middleware/CatchAsyncErrors');
 const sendToken = require('../utils/jwt');
+const jwt = require('jsonwebtoken');
 const cloudinary = require('../config/cloudinary');
 
 // register new user and upload avatar to cloudinary
@@ -63,14 +64,39 @@ exports.logoutUser = catchAsyncError(async (req, res, next) => {
 
 // send current user details
 exports.sendCurrentUser = catchAsyncError(async (req, res, next) => {
-  const { token } = req.cookies;
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return next(
+      new ErrorHandler('Please login again to access this resource', 401)
+    );
+  }
+  const token = authHeader.split(' ')[1];
   if (!token) {
-    return next(new ErrorHandler('User not found', 400));
+    return next(
+      new ErrorHandler('Please login again to access this resource', 401)
+    );
   }
   const decodedData = await jwt.verify(token, process.env.JWT_SECRET);
-  const admin = await Admin.findById(decodedData.id);
-  if (!admin) {
+  const user = await User.findById(decodedData.id);
+  if (!user) {
     new ErrorHandler('User not found', 401);
   }
-  sendToken(admin, 200, res);
+  sendToken(user, 200, res);
+});
+
+// send user(s)
+exports.sendUsers = catchAsyncError(async (req, res, next) => {
+  const keyword = req.query.search
+    ? {
+        $or: [
+          { name: { $regex: req.query.search, $options: 'i' } },
+          { email: { $regex: req.query.search, $options: 'i' } },
+        ],
+      }
+    : {};
+  const users = await User.find(keyword).find({ _id: { $ne: req.user._id } });
+  res.status(200).json({
+    success: true,
+    data: users,
+  });
 });
