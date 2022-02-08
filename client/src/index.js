@@ -4,12 +4,15 @@ import App from './App';
 import theme from './config/Theme';
 import { UserProvider } from './context/userContext';
 import { ChakraProvider } from '@chakra-ui/react';
+import { ChatProvider } from './context/chatContext';
 
 ReactDOM.render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
       <UserProvider>
-        <App />
+        <ChatProvider>
+          <App />
+        </ChatProvider>
       </UserProvider>
     </ChakraProvider>
   </React.StrictMode>,
