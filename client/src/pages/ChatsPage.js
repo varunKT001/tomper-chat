@@ -1,7 +1,17 @@
 import React from 'react';
+import { SearchUserSideBar, UsersChat, ChatBox } from '../components';
+import { Flex, Container } from '@chakra-ui/react';
 
 function ChatsPage() {
-  return <div>chat page</div>;
+  return (
+    <Container w='100%'>
+      <SearchUserSideBar />
+      <Flex>
+        <UsersChat />
+        <ChatBox />
+      </Flex>
+    </Container>
+  );
 }
 
 export default ChatsPage;
