@@ -11,7 +11,6 @@ const UserContext = React.createContext();
 
 export const UserProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
-  const [token, setToken] = useState(getLocalStorage('token'));
   const toast = useToast();
 
   const setUser = (user) => {
@@ -21,9 +20,9 @@ export const UserProvider = ({ children }) => {
   const checkAuth = async () => {
     try {
       const response = await axios.post('http://localhost:5000/api/user/auth');
-      const { data, token } = response.data;
+      const { data } = response.data;
       setUser(data);
-      setToken(token);
+      setLocalStorage('token', data.token);
     } catch (error) {
       console.log(error.response);
     }
@@ -32,9 +31,9 @@ export const UserProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const response = await axios.post('/api/user/login', { email, password });
-      const { data, token } = response.data;
+      const { data } = response.data;
       setUser(data);
-      setToken(token);
+      setLocalStorage('token', data.token);
       return toast({
         position: 'top',
         title: 'Logged In',
@@ -64,9 +63,9 @@ export const UserProvider = ({ children }) => {
         password,
         avatar,
       });
-      const { data, token } = response.data;
+      const { data } = response.data;
       setUser(data);
-      setToken(token);
+      setLocalStorage('token', data.token);
       return toast({
         position: 'top',
         title: 'Registration successfull',
@@ -90,18 +89,13 @@ export const UserProvider = ({ children }) => {
 
   const logout = async () => {
     setUser(null);
-    setToken(null);
+    localStorage.clear();
   };
 
   useEffect(() => {
     checkAuth();
     // eslint-disable-next-line
   }, []);
-
-  useEffect(() => {
-    setLocalStorage('token', token);
-    // eslint-disable-next-line
-  }, [token]);
 
   return (
     <UserContext.Provider value={{ currentUser, login, register, logout }}>

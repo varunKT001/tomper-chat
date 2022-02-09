@@ -44,7 +44,6 @@ function Login() {
     }
     setLoading(true);
     await login(email, password);
-    setLoading(false);
   };
 
   const handleChange = (e) => {
@@ -62,9 +61,9 @@ function Login() {
         <Input
           type='email'
           name='email'
-          placeholder='Enter your email'
           variant='filled'
           focusBorderColor='green.500'
+          placeholder='Enter your email'
           value={credentials.email}
           onChange={handleChange}
         />
@@ -76,19 +75,30 @@ function Login() {
             name='password'
             pr='4.5rem'
             variant='filled'
+            focusBorderColor='green.500'
             type={show ? 'text' : 'password'}
             placeholder='Enter password'
             value={credentials.password}
             onChange={handleChange}
           />
           <InputRightElement width='4.5rem'>
-            <Button h='1.75rem' size='sm' onClick={handleShow}>
+            <Button
+              h='1.75rem'
+              size='sm'
+              colorScheme='whatsapp'
+              onClick={handleShow}
+            >
               {show ? 'Hide' : 'Show'}
             </Button>
           </InputRightElement>
         </InputGroup>
       </FormControl>
-      <Button isFullWidth isLoading={loading} onClick={handleSubmit}>
+      <Button
+        isFullWidth
+        isLoading={loading}
+        colorScheme='whatsapp'
+        onClick={handleSubmit}
+      >
         Login
       </Button>
     </VStack>

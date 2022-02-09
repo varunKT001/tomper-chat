@@ -80,7 +80,6 @@ function Register() {
     }
     setLoading(true);
     await register(name, email, password, avatar);
-    setLoading(false);
   };
 
   return (
@@ -115,13 +114,19 @@ function Register() {
             name='password'
             pr='4.5rem'
             variant='filled'
+            focusBorderColor='green.500'
             type={show ? 'text' : 'password'}
             placeholder='Enter password'
             value={credentials.password}
             onChange={handleChange}
           />
           <InputRightElement width='4.5rem'>
-            <Button h='1.75rem' size='sm' onClick={handleShow}>
+            <Button
+              h='1.75rem'
+              size='sm'
+              colorScheme='whatsapp'
+              onClick={handleShow}
+            >
               {show ? 'Hide' : 'Show'}
             </Button>
           </InputRightElement>
@@ -134,13 +139,19 @@ function Register() {
             name='confirmPassword'
             pr='4.5rem'
             variant='filled'
+            focusBorderColor='green.500'
             type={show ? 'text' : 'password'}
             placeholder='Enter password'
             value={credentials.confirmPassword}
             onChange={handleChange}
           />
           <InputRightElement width='4.5rem'>
-            <Button h='1.75rem' size='sm' onClick={handleShow}>
+            <Button
+              h='1.75rem'
+              size='sm'
+              colorScheme='whatsapp'
+              onClick={handleShow}
+            >
               {show ? 'Hide' : 'Show'}
             </Button>
           </InputRightElement>
@@ -157,7 +168,12 @@ function Register() {
           onChange={handleImageUpload}
         />
       </FormControl>
-      <Button isFullWidth isLoading={loading} onClick={handleSubmit}>
+      <Button
+        isFullWidth
+        isLoading={loading}
+        colorScheme='whatsapp'
+        onClick={handleSubmit}
+      >
         Register
       </Button>
     </VStack>
