@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BsInfoLg } from 'react-icons/bs';
+import { BsThreeDots } from 'react-icons/bs';
 import { useUserContext } from '../context/userContext';
 import { getLocalStorage } from '../utils/helpers';
 import { SkeletonLoader, UserListItem, UserBadgeItem } from '.';
@@ -247,9 +247,9 @@ function UpdateGroupChatModal({ fetchMessages }) {
   return (
     <>
       <IconButton
-        icon={<BsInfoLg />}
-        colorScheme='green'
-        variant='outline'
+        icon={<BsThreeDots />}
+        colorScheme='gray'
+        variant='ghost'
         onClick={onOpen}
       />
       <Modal isOpen={isOpen} onClose={onClose}>

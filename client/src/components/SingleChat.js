@@ -3,6 +3,7 @@ import { useChatContext } from '../context/chatContext';
 import { IoArrowBackOutline } from 'react-icons/io5';
 import { getSender, getSendersFullDetails } from '../utils/helpers';
 import { useUserContext } from '../context/userContext';
+import bcg2 from '../assets/bcg-2.png';
 import {
   ProfileModal,
   SpinnerLoader,
@@ -12,12 +13,16 @@ import {
 import InputEmoji from 'react-input-emoji';
 import {
   Box,
-  Center,
+  Image,
   IconButton,
   Flex,
   Text,
   FormControl,
   useToast,
+  VStack,
+  Avatar,
+  AvatarGroup,
+  HStack,
 } from '@chakra-ui/react';
 import bcg from '../assets/bcg.png';
 import axios from 'axios';
@@ -111,6 +116,7 @@ function SingleChat() {
             bg='gray.100'
             justifyContent='space-between'
             alignItems='center'
+            shadow='sm'
           >
             <IconButton
               icon={<IoArrowBackOutline />}
@@ -119,14 +125,31 @@ function SingleChat() {
             />
             {!selectedChat.isGroupChat ? (
               <>
-                <Text>{getSender(currentUser, selectedChat.users)}</Text>
+                <HStack spacing='4'>
+                  <Avatar
+                    size='sm'
+                    name={getSender(currentUser, selectedChat.users)}
+                    src={
+                      getSendersFullDetails(currentUser, selectedChat.users)
+                        .avatar.url
+                    }
+                  />
+                  <Text>{getSender(currentUser, selectedChat.users)}</Text>
+                </HStack>
                 <ProfileModal
                   user={getSendersFullDetails(currentUser, selectedChat.users)}
                 />
               </>
             ) : (
               <>
-                <Text>{selectedChat.chatName.toUpperCase()}</Text>
+                <HStack spacing='4'>
+                  <AvatarGroup size='sm' max='3'>
+                    {selectedChat.users.map((user, index) => {
+                      return <Avatar name={user.name} src={user.avatar.url} />;
+                    })}
+                  </AvatarGroup>
+                  <Text>{selectedChat.chatName.toUpperCase()}</Text>
+                </HStack>
                 <UpdateGroupChatModal fetchMessages={fetchMessages} />
               </>
             )}
@@ -163,12 +186,29 @@ function SingleChat() {
         <Flex
           w='100%'
           h='100%'
+          bg='gray.50'
           flexDirection='column'
-          justifyContent='center'
+          justifyContent='space-between'
           alignItems='center'
           overflowY='hidden'
         >
-          Select user to chat
+          <VStack
+            w='50%'
+            m='auto'
+            spacing='4'
+            justifyContent='center'
+            alignItems='center'
+          >
+            <Image src={bcg2} width='300px' />
+            <Text textAlign='center' fontSize='3xl' fontWeight='300'>
+              No need to keep phone connected
+            </Text>
+            <Text textAlign='center' fontWeight='300' color='gray.400'>
+              TomperChat is centralized and does'nt need phone to be connected.
+              Also its not End-To-End Encrypted, so chat wisely.
+            </Text>
+          </VStack>
+          <Box w='100%' h='10px' alignSelf='flex-end' bg='whatsapp.400'></Box>
         </Flex>
       )}
     </Flex>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BsInfoLg } from 'react-icons/bs';
+import { BsThreeDots } from 'react-icons/bs';
 import {
   Modal,
   ModalOverlay,
@@ -26,9 +26,9 @@ function ProfileModal({ user, children }) {
         <span onClick={onOpen}>{children}</span>
       ) : (
         <IconButton
-          icon={<BsInfoLg />}
-          colorScheme='green'
-          variant='outline'
+          icon={<BsThreeDots />}
+          colorScheme='gray'
+          variant='ghost'
           onClick={onOpen}
         />
       )}
