@@ -32,7 +32,7 @@ axios.defaults.headers.common['Authorization'] = `Bearer ${getLocalStorage(
   'token'
 )}`;
 
-function UpdateGroupChatModal() {
+function UpdateGroupChatModal({ fetchMessages }) {
   const { currentUser } = useUserContext();
   const { selectedChat, setChats, setSelectedChat, fetchFlag, setFetchFlag } =
     useChatContext();
@@ -155,6 +155,7 @@ function UpdateGroupChatModal() {
       setFetchFlag((prev) => {
         return !prev;
       });
+      fetchMessages();
       setLoading(false);
     } catch (error) {
       const { message } = error.response.data;
@@ -171,6 +172,16 @@ function UpdateGroupChatModal() {
   };
 
   const handleRename = async () => {
+    if (selectedChat.groupAdmin._id !== currentUser.id) {
+      return toast({
+        position: 'top',
+        title: 'Warning',
+        description: 'Only admin can rename group',
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
     if (!groupChatName) {
       return toast({
         position: 'top',
@@ -222,14 +233,15 @@ function UpdateGroupChatModal() {
   };
 
   const handleSubmit = async () => {
-    const userToBeRemoved = {
-      _id: currentUser.id,
-      name: currentUser.name,
-      email: currentUser.email,
-    };
-    await handleRemove(userToBeRemoved);
-    setSelectedChat(null);
-    onClose();
+    return toast({
+      position: 'top',
+      title: 'Coming soon',
+      description:
+        'This feature is yet to come. Until then you cannot leave a group 🙂',
+      status: 'info',
+      duration: 5000,
+      isClosable: true,
+    });
   };
 
   return (

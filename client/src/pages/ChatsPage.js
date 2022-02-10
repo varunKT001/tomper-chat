@@ -8,6 +8,7 @@ function ChatsPage() {
   return (
     <Stack spacing='0' direction={{ base: 'column', md: 'row' }} h='100vh'>
       <VStack
+        d={{ base: selectedChat ? 'none' : 'flex', md: 'flex' }}
         w={{ base: '100%', md: '30%' }}
         minH={`${!selectedChat && '100vh'}`}
         spacing='0'

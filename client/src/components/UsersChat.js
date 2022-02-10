@@ -18,7 +18,6 @@ function UsersChat() {
     <Box
       w='100%'
       h='100%'
-      d={{ base: selectedChat ? 'none' : 'flex', md: 'flex' }}
       flexDirection='column'
       alignItems='center'
       p='4'

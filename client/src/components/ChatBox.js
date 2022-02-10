@@ -12,6 +12,7 @@ function ChatBox() {
     <Box
       d={{ base: selectedChat ? 'flex' : 'none', md: 'flex' }}
       w={{ base: '100%', md: '70%' }}
+      h={{ base: '100%' }}
     >
       <SingleChat />
     </Box>
