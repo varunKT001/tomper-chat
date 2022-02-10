@@ -222,7 +222,13 @@ function UpdateGroupChatModal() {
   };
 
   const handleSubmit = async () => {
-    await handleRemove(currentUser);
+    const userToBeRemoved = {
+      _id: currentUser.id,
+      name: currentUser.name,
+      email: currentUser.email,
+    };
+    await handleRemove(userToBeRemoved);
+    setSelectedChat(null);
     onClose();
   };
 
@@ -304,7 +310,7 @@ function UpdateGroupChatModal() {
             )}
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme='red' onClick={() => handleRemove(currentUser)}>
+            <Button colorScheme='red' onClick={handleSubmit}>
               Leave group
             </Button>
           </ModalFooter>
