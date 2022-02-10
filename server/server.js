@@ -15,6 +15,7 @@ const app = express();
 // requiring routers
 const userRouter = require('./routes/userRouter');
 const chatRouter = require('./routes/chatRouter');
+const messageRouter = require('./routes/messageRouter');
 
 // requiring middlewares
 const errorMiddleware = require('./middleware/Error');
@@ -37,6 +38,7 @@ app.use(cookieParser());
 // using routers
 app.use('/api/user', userRouter);
 app.use('/api/chat', chatRouter);
+app.use('/api/message', messageRouter);
 
 // using other middlewares
 app.use(errorMiddleware);
