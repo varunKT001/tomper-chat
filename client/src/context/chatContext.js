@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useToast } from '@chakra-ui/react';
 import axios from 'axios';
 import { useUserContext } from './userContext';
@@ -34,6 +34,10 @@ export const ChatProvider = ({ children }) => {
       });
     }
   };
+
+  useEffect(() => {
+    setSelectedChat(null);
+  }, [currentUser]);
 
   return (
     <ChatContext.Provider

@@ -143,11 +143,7 @@ function SingleChat() {
             ) : (
               <>
                 <HStack spacing='4'>
-                  <AvatarGroup size='sm' max='3'>
-                    {selectedChat.users.map((user, index) => {
-                      return <Avatar name={user.name} src={user.avatar.url} />;
-                    })}
-                  </AvatarGroup>
+                  <Avatar size='sm' name={selectedChat.chatName} />
                   <Text>{selectedChat.chatName.toUpperCase()}</Text>
                 </HStack>
                 <UpdateGroupChatModal fetchMessages={fetchMessages} />
@@ -204,7 +200,7 @@ function SingleChat() {
               No need to keep phone connected
             </Text>
             <Text textAlign='center' fontWeight='300' color='gray.400'>
-              TomperChat is centralized and does'nt need phone to be connected.
+              TomperChat is centralized and doesn't need phone to be connected.
               Also its not End-To-End Encrypted, so chat wisely.
             </Text>
           </VStack>
