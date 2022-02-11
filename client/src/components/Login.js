@@ -44,6 +44,7 @@ function Login() {
     }
     setLoading(true);
     await login(email, password);
+    setLoading(false);
   };
 
   const handleChange = (e) => {

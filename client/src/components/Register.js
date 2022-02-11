@@ -80,6 +80,7 @@ function Register() {
     }
     setLoading(true);
     await register(name, email, password, avatar);
+    setLoading(false);
   };
 
   return (

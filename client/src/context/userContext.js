@@ -11,6 +11,7 @@ const UserContext = React.createContext();
 
 export const UserProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const toast = useToast();
 
   const setUser = (user) => {
@@ -19,12 +20,15 @@ export const UserProvider = ({ children }) => {
 
   const checkAuth = async () => {
     try {
+      setAuthLoading(true);
       const response = await axios.post('http://localhost:5000/api/user/auth');
       const { data } = response.data;
       setUser(data);
+      setAuthLoading(false);
       setLocalStorage('token', data.token);
     } catch (error) {
       console.log(error.response);
+      setAuthLoading(false);
     }
   };
 
@@ -98,7 +102,9 @@ export const UserProvider = ({ children }) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{ currentUser, login, register, logout }}>
+    <UserContext.Provider
+      value={{ currentUser, authLoading, login, register, logout }}
+    >
       {children}
     </UserContext.Provider>
   );

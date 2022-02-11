@@ -30,9 +30,8 @@ function UsersChat() {
         <VStack w='100%' spacing='0'>
           {chats.map((chat, index) => {
             return (
-              <>
+              <Box key={index} w='100%'>
                 <HStack
-                  key={index}
                   w='100%'
                   m='0'
                   py='4'
@@ -70,7 +69,7 @@ function UsersChat() {
                   </VStack>
                 </HStack>
                 <Divider />
-              </>
+              </Box>
             );
           })}
         </VStack>
