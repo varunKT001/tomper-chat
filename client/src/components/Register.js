@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useUserContext } from '../context/userContext';
+import useMounted from '../hooks/useMounted';
 import {
   FormControl,
   FormLabel,
@@ -26,6 +27,7 @@ function Register() {
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
   const toast = useToast();
+  const mounted = useMounted();
 
   const handleShow = () => {
     setShow((prev) => {
@@ -80,7 +82,9 @@ function Register() {
     }
     setLoading(true);
     await register(name, email, password, avatar);
-    setLoading(false);
+    if (mounted.current) {
+      setLoading(false);
+    }
   };
 
   return (

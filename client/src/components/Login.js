@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useUserContext } from '../context/userContext';
+import useMounted from '../hooks/useMounted';
 import {
   FormControl,
   FormLabel,
@@ -23,6 +24,7 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
   const toast = useToast();
+  const mounted = useMounted();
 
   const handleShow = () => {
     setShow((prev) => {
@@ -44,7 +46,9 @@ function Login() {
     }
     setLoading(true);
     await login(email, password);
-    setLoading(false);
+    if (mounted.current) {
+      setLoading(false);
+    }
   };
 
   const handleChange = (e) => {
