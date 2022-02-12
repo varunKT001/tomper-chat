@@ -19,7 +19,7 @@ export const UserProvider = ({ children }) => {
   const checkAuth = async () => {
     try {
       setAuthLoading(true);
-      const response = await axios.post('http://localhost:5000/api/user/auth');
+      const response = await axios.post('/api/user/auth');
       const { data } = response.data;
       setUser(data);
       setAuthLoading(false);

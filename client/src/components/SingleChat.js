@@ -4,13 +4,15 @@ import { IoArrowBackOutline } from 'react-icons/io5';
 import { getSender, getSendersFullDetails } from '../utils/helpers';
 import { useUserContext } from '../context/userContext';
 import bcg2 from '../assets/bcg-2.png';
+import bcg from '../assets/bcg.png';
+import axios from 'axios';
+import io from 'socket.io-client';
 import {
   ProfileModal,
   SpinnerLoader,
   UpdateGroupChatModal,
   ScrollableChat,
 } from '.';
-import InputEmoji from 'react-input-emoji';
 import {
   Box,
   Image,
@@ -21,17 +23,22 @@ import {
   useToast,
   VStack,
   Avatar,
-  AvatarGroup,
   HStack,
+  Input,
 } from '@chakra-ui/react';
-import bcg from '../assets/bcg.png';
-import axios from 'axios';
+
+let socket;
+let selectedChatBackup;
+let timeout;
 
 function SingleChat() {
   const { currentUser } = useUserContext();
   const { selectedChat, setSelectedChat } = useChatContext();
+  const [socketConnected, setSocketConnected] = useState(false);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  const [typing, setTyping] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const [loading, setLoading] = useState(false);
   const toast = useToast();
 
@@ -45,6 +52,7 @@ function SingleChat() {
       const { data } = response.data;
       setMessages(data);
       setLoading(false);
+      socket.emit('join_room', selectedChat._id);
     } catch (error) {
       const { message } = error.response.data;
       setLoading(false);
@@ -69,6 +77,8 @@ function SingleChat() {
         setNewMessage('');
         const response = await axios.post('/api/message', body);
         const { data } = response.data;
+        socket.emit('new_message', data);
+        socket.emit('stop_typing', selectedChat._id);
         setMessages((prev) => {
           return [...prev, data];
         });
@@ -86,13 +96,49 @@ function SingleChat() {
     }
   };
 
-  const handleTyping = (text) => {
-    setNewMessage(text);
+  const handleTyping = (e) => {
+    setNewMessage(e.target.value);
+    if (!socketConnected) {
+      return;
+    }
+    if (!typing) {
+      setTyping(true);
+      socket.emit('typing', selectedChat._id);
+    }
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+    timeout = setTimeout(() => {
+      setTyping(false);
+      socket.emit('stop_typing', selectedChat._id);
+    }, 3000);
   };
 
   useEffect(() => {
+    socket = io(process.env.REACT_APP_BACKEND_URL);
+    socket.emit('setup', currentUser);
+    socket.on('connected', () => setSocketConnected(true));
+    socket.on('typing', () => setIsTyping(true));
+    socket.on('stop_typing', () => setIsTyping(false));
+  }, []);
+
+  useEffect(() => {
     fetchMessages();
+    selectedChatBackup = selectedChat;
   }, [selectedChat]);
+
+  useEffect(() => {
+    socket.on('new_message_recieved', (message) => {
+      if (!selectedChatBackup || selectedChatBackup._id !== message.chat._id) {
+        return;
+      } else {
+        setMessages((prev) => {
+          return [...prev, message];
+        });
+      }
+    });
+    return () => socket.removeAllListeners('new_message_recieved');
+  });
 
   return (
     <Flex flexDirection='column' w='100%'>
@@ -114,14 +160,21 @@ function SingleChat() {
               <>
                 <HStack spacing='4'>
                   <Avatar
-                    size='sm'
+                    size='md'
                     name={getSender(currentUser, selectedChat.users)}
                     src={
                       getSendersFullDetails(currentUser, selectedChat.users)
                         .avatar.url
                     }
                   />
-                  <Text>{getSender(currentUser, selectedChat.users)}</Text>
+                  <VStack spacing='0' alignItems='flex-start'>
+                    <Text>{getSender(currentUser, selectedChat.users)}</Text>
+                    {isTyping && (
+                      <Text fontSize='sm' fontWeight='600' color='whatsapp.500'>
+                        typing...
+                      </Text>
+                    )}
+                  </VStack>
                 </HStack>
                 <ProfileModal
                   user={getSendersFullDetails(currentUser, selectedChat.users)}
@@ -130,8 +183,15 @@ function SingleChat() {
             ) : (
               <>
                 <HStack spacing='4'>
-                  <Avatar size='sm' name={selectedChat.chatName} />
-                  <Text>{selectedChat.chatName.toUpperCase()}</Text>
+                  <Avatar size='md' name={selectedChat.chatName} />
+                  <VStack spacing='0' alignItems='flex-start'>
+                    <Text>{selectedChat.chatName.toUpperCase()}</Text>
+                    {isTyping && (
+                      <Text fontSize='sm' fontWeight='600' color='whatsapp.500'>
+                        typing...
+                      </Text>
+                    )}
+                  </VStack>
                 </HStack>
                 <UpdateGroupChatModal fetchMessages={fetchMessages} />
               </>
@@ -154,9 +214,10 @@ function SingleChat() {
             )}
             <Box py='2' px='4' bg='gray.100'>
               <FormControl onKeyDown={sendMessage} isRequired>
-                <InputEmoji
+                <Input
                   bg='white'
                   focusBorderColor='none'
+                  borderRadius='full'
                   placeholder='Write your message'
                   value={newMessage}
                   onChange={handleTyping}

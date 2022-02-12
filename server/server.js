@@ -20,6 +20,9 @@ const messageRouter = require('./routes/messageRouter');
 // requiring middlewares
 const errorMiddleware = require('./middleware/Error');
 
+// requiring sockets event handlers
+const socketEventHandler = require('./controllers/socketController');
+
 // uncaught exception
 process.on('uncaughtException', (err) => {
   console.log(`Error: ${err.message}`);
@@ -44,8 +47,24 @@ app.use('/api/message', messageRouter);
 app.use(errorMiddleware);
 
 // starting server
-app.listen(process.env.PORT, () => {
+const server = app.listen(process.env.PORT, () => {
   console.log('server running 🚀');
+});
+
+// starting the socket
+const io = require('socket.io')(server, {
+  pingTimeout: 60000,
+  cors: {
+    origin: process.env.FRONTEND_URL,
+  },
+});
+
+// listening events
+io.on('connection', (socket) => {
+  socketEventHandler.handleSetup(socket);
+  socketEventHandler.handleJoinChat(socket);
+  socketEventHandler.handleMessage(socket);
+  socketEventHandler.handleTyping(socket);
 });
 
 // unhandled promise rejection
