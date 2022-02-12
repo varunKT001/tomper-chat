@@ -120,14 +120,6 @@ function SingleChat() {
     socket.on('connected', () => setSocketConnected(true));
     socket.on('typing', () => setIsTyping(true));
     socket.on('stop_typing', () => setIsTyping(false));
-  }, []);
-
-  useEffect(() => {
-    fetchMessages();
-    selectedChatBackup = selectedChat;
-  }, [selectedChat]);
-
-  useEffect(() => {
     socket.on('new_message_recieved', (message) => {
       if (!selectedChatBackup || selectedChatBackup._id !== message.chat._id) {
         return;
@@ -137,8 +129,12 @@ function SingleChat() {
         });
       }
     });
-    return () => socket.removeAllListeners('new_message_recieved');
-  });
+  }, []);
+
+  useEffect(() => {
+    fetchMessages();
+    selectedChatBackup = selectedChat;
+  }, [selectedChat]);
 
   return (
     <Flex flexDirection='column' w='100%'>
