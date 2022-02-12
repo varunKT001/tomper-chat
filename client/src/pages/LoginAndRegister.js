@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import logo from '../assets/logo.svg';
 import { Login, PreLoader, Register } from '../components';
 import { useUserContext } from '../context/userContext';
@@ -16,6 +16,10 @@ import {
 
 function Homepage() {
   const { authLoading } = useUserContext();
+
+  useEffect(() => {
+    document.title = 'TomperChat | Login/Register';
+  }, []);
 
   if (authLoading) {
     return <PreLoader />;
