@@ -40,16 +40,8 @@ function SingleChat() {
       return;
     }
     try {
-      const options = {
-        headers: {
-          Authorization: `Bearer ${currentUser.token}`,
-        },
-      };
       setLoading(true);
-      const response = await axios.get(
-        `/api/message/${selectedChat._id}`,
-        options
-      );
+      const response = await axios.get(`/api/message/${selectedChat._id}`);
       const { data } = response.data;
       setMessages(data);
       setLoading(false);
@@ -74,13 +66,8 @@ function SingleChat() {
           chatId: selectedChat._id,
           content: newMessage,
         };
-        const options = {
-          headers: {
-            Authorization: `Bearer ${currentUser.token}`,
-          },
-        };
         setNewMessage('');
-        const response = await axios.post('/api/message', body, options);
+        const response = await axios.post('/api/message', body);
         const { data } = response.data;
         setMessages((prev) => {
           return [...prev, data];

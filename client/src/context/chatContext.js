@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useToast } from '@chakra-ui/react';
-import axios from 'axios';
 import { useUserContext } from './userContext';
+import axios from 'axios';
 
 const ChatContext = React.createContext();
 
@@ -14,12 +14,7 @@ export const ChatProvider = ({ children }) => {
 
   const fetchUserChats = async () => {
     try {
-      const options = {
-        headers: {
-          Authorization: `Bearer ${currentUser.token}`,
-        },
-      };
-      const response = await axios.get('/api/chat', options);
+      const response = await axios.get('/api/chat');
       const { data } = response.data;
       setChats(data);
     } catch (error) {

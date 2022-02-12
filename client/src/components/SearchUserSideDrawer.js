@@ -46,15 +46,7 @@ function SearchUserSideDrawer({ children }) {
     }
     try {
       setLoading(true);
-      const options = {
-        headers: {
-          Authorization: `Bearer ${currentUser.token}`,
-        },
-      };
-      const response = await axios.get(
-        `/api/user?search=${searchText}`,
-        options
-      );
+      const response = await axios.get(`/api/user?search=${searchText}`);
       const { data } = response.data;
       setLoading(false);
       setSearchResult(data);
@@ -74,12 +66,7 @@ function SearchUserSideDrawer({ children }) {
   const handleAccessChat = async (userId) => {
     try {
       setChatsLoading(true);
-      const options = {
-        headers: {
-          Authorization: `Bearer ${currentUser.token}`,
-        },
-      };
-      const response = await axios.post('/api/chat', { userId }, options);
+      const response = await axios.post('/api/chat', { userId });
       const { data } = response.data;
       if (!chats.find((chat) => chat._id === data._id)) {
         setChats((prev) => {

@@ -3,9 +3,7 @@ import { useToast } from '@chakra-ui/react';
 import { getLocalStorage, setLocalStorage } from '../utils/helpers';
 import axios from 'axios';
 
-axios.defaults.headers.common['Authorization'] = `Bearer ${getLocalStorage(
-  'token'
-)}`;
+axios.defaults.withCredentials = true;
 
 const UserContext = React.createContext();
 
@@ -25,7 +23,6 @@ export const UserProvider = ({ children }) => {
       const { data } = response.data;
       setUser(data);
       setAuthLoading(false);
-      setLocalStorage('token', data.token);
     } catch (error) {
       console.log(error.response);
       setAuthLoading(false);
@@ -37,7 +34,6 @@ export const UserProvider = ({ children }) => {
       const response = await axios.post('/api/user/login', { email, password });
       const { data } = response.data;
       setUser(data);
-      setLocalStorage('token', data.token);
       return toast({
         position: 'top',
         title: 'Logged In',
@@ -69,7 +65,6 @@ export const UserProvider = ({ children }) => {
       });
       const { data } = response.data;
       setUser(data);
-      setLocalStorage('token', data.token);
       return toast({
         position: 'top',
         title: 'Registration successfull',
@@ -92,8 +87,29 @@ export const UserProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    setUser(null);
-    localStorage.clear();
+    try {
+      const response = await axios.post('/api/user/logout');
+      const { message } = response.data;
+      setUser(null);
+      return toast({
+        position: 'top',
+        title: 'Success',
+        description: message,
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
+    } catch (error) {
+      const { message } = error.response.data;
+      return toast({
+        position: 'top',
+        title: 'Error occured',
+        description: message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   useEffect(() => {

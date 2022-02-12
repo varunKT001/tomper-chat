@@ -50,12 +50,7 @@ function UpdateGroupChatModal({ fetchMessages }) {
     setSearchText(query);
     try {
       setLoading(true);
-      const options = {
-        headers: {
-          Authorization: `Bearer ${currentUser.token}`,
-        },
-      };
-      const response = await axios.get(`/api/user?search=${query}`, options);
+      const response = await axios.get(`/api/user?search=${query}`);
       const { data } = response.data;
       setLoading(false);
       setSearchResult(data);
@@ -99,13 +94,8 @@ function UpdateGroupChatModal({ fetchMessages }) {
         chatId: selectedChat._id,
         userId: userToBeAdded._id,
       };
-      const options = {
-        headers: {
-          Authorization: `Bearer ${currentUser.token}`,
-        },
-      };
       setLoading(true);
-      const response = await axios.post('/api/chat/groupadd', body, options);
+      const response = await axios.post('/api/chat/groupadd', body);
       const { data } = response.data;
       setSelectedChat(data);
       setFetchFlag((prev) => {
@@ -143,13 +133,8 @@ function UpdateGroupChatModal({ fetchMessages }) {
         chatId: selectedChat._id,
         userId: userToBeRemoved._id,
       };
-      const options = {
-        headers: {
-          Authorization: `Bearer ${currentUser.token}`,
-        },
-      };
       setLoading(true);
-      const response = await axios.post('/api/chat/groupremove', body, options);
+      const response = await axios.post('/api/chat/groupremove', body);
       const { data } = response.data;
       setSelectedChat(data);
       setFetchFlag((prev) => {
@@ -197,13 +182,8 @@ function UpdateGroupChatModal({ fetchMessages }) {
         chatId: selectedChat._id,
         chatName: groupChatName,
       };
-      const options = {
-        headers: {
-          Authorization: `Bearer ${currentUser.token}`,
-        },
-      };
       setRenameLoading(true);
-      const response = await axios.post('/api/chat/grouprename', body, options);
+      const response = await axios.post('/api/chat/grouprename', body);
       const { data } = response.data;
       setSelectedChat(data);
       setFetchFlag((prev) => {
