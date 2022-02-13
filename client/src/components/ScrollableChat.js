@@ -39,6 +39,7 @@ function ScrollableChat({ messages }) {
             )}
             <Text
               p='2'
+              maxW='50%'
               ml={`${
                 message.sender._id === currentUser.id
                   ? '0'

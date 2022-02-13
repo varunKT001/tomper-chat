@@ -35,6 +35,7 @@ function SingleChat() {
   const { currentUser } = useUserContext();
   const { selectedChat, setSelectedChat } = useChatContext();
   const [socketConnected, setSocketConnected] = useState(false);
+  const [onlineStatus, setOnlineStatus] = useState(false);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [typing, setTyping] = useState(false);
@@ -52,7 +53,10 @@ function SingleChat() {
       const { data } = response.data;
       setMessages(data);
       setLoading(false);
-      socket.emit('join_room', selectedChat._id);
+      socket.emit('join_room', {
+        room: selectedChat._id,
+        users: selectedChat.users,
+      });
     } catch (error) {
       const { message } = error.response.data;
       setLoading(false);
@@ -101,10 +105,8 @@ function SingleChat() {
     if (!socketConnected) {
       return;
     }
-    if (!typing) {
-      setTyping(true);
-      socket.emit('typing', selectedChat._id);
-    }
+    setTyping(true);
+    socket.emit('typing', selectedChat._id);
     if (timeout) {
       clearTimeout(timeout);
     }
@@ -118,6 +120,7 @@ function SingleChat() {
     socket = io(process.env.REACT_APP_BACKEND_URL);
     socket.emit('setup', currentUser);
     socket.on('connected', () => setSocketConnected(true));
+    socket.on('user_online_status', (online) => setOnlineStatus(online));
     socket.on('typing', () => setIsTyping(true));
     socket.on('stop_typing', () => setIsTyping(false));
     socket.on('new_message_recieved', (message) => {
@@ -165,11 +168,13 @@ function SingleChat() {
                   />
                   <VStack spacing='0' alignItems='flex-start'>
                     <Text>{getSender(currentUser, selectedChat.users)}</Text>
-                    {isTyping && (
-                      <Text fontSize='sm' fontWeight='600' color='whatsapp.500'>
-                        typing...
-                      </Text>
-                    )}
+                    <Text fontSize='sm' color='gray.400'>
+                      {onlineStatus
+                        ? isTyping
+                          ? 'typing...'
+                          : 'online'
+                        : 'offline'}
+                    </Text>
                   </VStack>
                 </HStack>
                 <ProfileModal
@@ -183,7 +188,7 @@ function SingleChat() {
                   <VStack spacing='0' alignItems='flex-start'>
                     <Text>{selectedChat.chatName.toUpperCase()}</Text>
                     {isTyping && (
-                      <Text fontSize='sm' fontWeight='600' color='whatsapp.500'>
+                      <Text fontSize='sm' color='gray.400'>
                         typing...
                       </Text>
                     )}

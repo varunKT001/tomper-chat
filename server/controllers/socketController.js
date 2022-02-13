@@ -1,13 +1,28 @@
+let connectedUsers = [];
+
 exports.handleSetup = (socket) => {
   socket.on('setup', (user) => {
+    connectedUsers.push(user.id);
+    socket.user_id = user.id;
     socket.join(user.id);
     socket.emit('connected');
+  });
+  socket.on('disconnect', () => {
+    connectedUsers = connectedUsers.filter((user) => user !== socket.user_id);
+    socket.in(socket.chat_id).emit('user_online_status', false);
   });
 };
 
 exports.handleJoinChat = (socket) => {
-  socket.on('join_room', (room) => {
+  socket.on('join_room', ({ room, users }) => {
+    socket.chat_id = room;
     socket.join(room);
+    users = users.map((user) => {
+      return user._id;
+    });
+    const online = users.every((v) => connectedUsers.includes(v));
+    socket.emit('user_online_status', online);
+    socket.in(room).emit('user_online_status', online);
   });
 };
 
