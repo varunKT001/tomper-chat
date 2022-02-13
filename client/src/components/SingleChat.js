@@ -36,7 +36,6 @@ function SingleChat() {
   const {
     selectedChat,
     notification,
-    fetchFlag,
     setSelectedChat,
     setNotification,
     setFetchFlag,
@@ -124,7 +123,7 @@ function SingleChat() {
   };
 
   useEffect(() => {
-    socket = io(process.env.REACT_APP_BACKEND_URL);
+    socket = io('https://tomper-chat.herokuapp.com');
     socket.emit('setup', currentUser);
     socket.on('connected', () => setSocketConnected(true));
     socket.on('user_online_status', (online) => setOnlineStatus(online));
