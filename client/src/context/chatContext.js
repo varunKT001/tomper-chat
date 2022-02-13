@@ -10,6 +10,7 @@ export const ChatProvider = ({ children }) => {
   const toast = useToast();
   const [chats, setChats] = useState([]);
   const [selectedChat, setSelectedChat] = useState();
+  const [notification, setNotification] = useState([]);
   const [fetchFlag, setFetchFlag] = useState(false);
 
   const fetchUserChats = async () => {
@@ -39,11 +40,13 @@ export const ChatProvider = ({ children }) => {
       value={{
         chats,
         fetchFlag,
+        notification,
         selectedChat,
         setChats,
         setFetchFlag,
-        setSelectedChat,
         fetchUserChats,
+        setNotification,
+        setSelectedChat,
       }}
     >
       {children}

@@ -2,7 +2,7 @@ import React from 'react';
 import ScrollableFeed from 'react-scrollable-feed';
 import { isSameSender, isSameUser, isLastMessage } from '../utils/helpers';
 import { useUserContext } from '../context/userContext';
-import { Avatar, Box, Flex, Text, Tooltip } from '@chakra-ui/react';
+import { Avatar, Box, Flex, HStack, Text, Tooltip } from '@chakra-ui/react';
 
 function ScrollableChat({ messages }) {
   const { currentUser } = useUserContext();
@@ -37,7 +37,7 @@ function ScrollableChat({ messages }) {
                 />
               </Tooltip>
             )}
-            <Text
+            <HStack
               p='2'
               maxW='50%'
               ml={`${
@@ -54,8 +54,15 @@ function ScrollableChat({ messages }) {
               borderRadius='md'
               shadow='base'
             >
-              {message.content}
-            </Text>
+              <Text>{message.content}</Text>
+              <Text alignSelf='flex-end' fontSize='0.75rem' color='gray.500'>
+                {new Date(message.createdAt).toLocaleTimeString([], {
+                  hour: '2-digit',
+                  hour12: true,
+                  minute: '2-digit',
+                })}
+              </Text>
+            </HStack>
           </Flex>
         );
       })}

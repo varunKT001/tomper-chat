@@ -33,7 +33,14 @@ let timeout;
 
 function SingleChat() {
   const { currentUser } = useUserContext();
-  const { selectedChat, setSelectedChat } = useChatContext();
+  const {
+    selectedChat,
+    notification,
+    fetchFlag,
+    setSelectedChat,
+    setNotification,
+    setFetchFlag,
+  } = useChatContext();
   const [socketConnected, setSocketConnected] = useState(false);
   const [onlineStatus, setOnlineStatus] = useState(false);
   const [messages, setMessages] = useState([]);
@@ -125,7 +132,14 @@ function SingleChat() {
     socket.on('stop_typing', () => setIsTyping(false));
     socket.on('new_message_recieved', (message) => {
       if (!selectedChatBackup || selectedChatBackup._id !== message.chat._id) {
-        return;
+        if (!notification.includes(message)) {
+          setNotification((prev) => {
+            return [message, ...prev];
+          });
+          setFetchFlag((prev) => {
+            return !prev;
+          });
+        }
       } else {
         setMessages((prev) => {
           return [...prev, message];

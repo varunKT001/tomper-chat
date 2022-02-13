@@ -130,7 +130,12 @@ function GroupChatModal() {
 
   return (
     <>
-      <IconButton icon={<AiOutlinePlus />} onClick={onOpen} />
+      <IconButton
+        icon={<AiOutlinePlus />}
+        fontSize='2xl'
+        color='gray.500'
+        onClick={onOpen}
+      />
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>

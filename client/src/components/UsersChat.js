@@ -58,14 +58,36 @@ function UsersChat() {
                   />
                   <VStack
                     w='100%'
+                    spacing='0'
                     justifyContent='space-between'
                     alignItems='flex-start'
                   >
-                    <Text fontSize='1.125rem'>
-                      {!chat.isGroupChat
-                        ? getSender(currentUser, chat.users)
-                        : chat.chatName}
-                    </Text>
+                    <HStack
+                      w='100%'
+                      justifyContent='space-between'
+                      fontSize='1.125rem'
+                    >
+                      <Text>
+                        {!chat.isGroupChat
+                          ? getSender(currentUser, chat.users)
+                          : chat.chatName}
+                      </Text>
+                      {chat.latestMessage && (
+                        <Text fontSize='xs' color='gray.400'>
+                          {new Date(
+                            chat.latestMessage.createdAt
+                          ).toLocaleDateString()}
+                        </Text>
+                      )}
+                    </HStack>
+                    {chat.latestMessage && (
+                      <Text color='gray.500'>
+                        {chat.latestMessage.sender.name}:{' '}
+                        {chat.latestMessage.content.length > 50
+                          ? chat.latestMessage.content.substring(0, 51) + '...'
+                          : chat.latestMessage.content}
+                      </Text>
+                    )}
                   </VStack>
                 </HStack>
                 <Divider />
