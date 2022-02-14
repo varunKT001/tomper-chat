@@ -9,7 +9,7 @@ exports.handleSetup = (socket) => {
   });
   socket.on('disconnect', () => {
     connectedUsers = connectedUsers.filter((user) => user !== socket.user_id);
-    socket.in(socket.chat_id).emit('user_online_status', false);
+    socket.to(socket.chat_id).emit('user_online_status', false);
   });
 };
 
@@ -22,14 +22,22 @@ exports.handleJoinChat = (socket) => {
     });
     const online = users.every((v) => connectedUsers.includes(v));
     socket.emit('user_online_status', online);
-    socket.in(room).emit('user_online_status', online);
+    socket.to(room).emit('user_online_status', online);
   });
 };
 
 exports.handleMessage = (socket) => {
   socket.on('new_message', (message) => {
     let chat = message.chat;
-    socket.to(chat._id).emit('new_message_recieved', message);
+    if (!chat.users) {
+      return console.log('no users');
+    }
+    chat.users.forEach((user) => {
+      if (user._id === message.sender._id) {
+        return;
+      }
+      socket.to(user._id).emit('new_message_recieved', message);
+    });
   });
 };
 
