@@ -34,15 +34,14 @@ axios.defaults.headers.common['Authorization'] = `Bearer ${getLocalStorage(
 
 function UpdateGroupChatModal({ fetchMessages }) {
   const { currentUser } = useUserContext();
-  const { selectedChat, setChats, setSelectedChat, fetchFlag, setFetchFlag } =
-    useChatContext();
+  const { selectedChat, setSelectedChat, setFetchFlag } = useChatContext();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [groupChatName, setGroupChatName] = useState(selectedChat.chatName);
-  const [selectedUsers, setSelectedUsers] = useState([]);
   const [searchText, setSearchText] = useState('');
   const [searchResult, setSearchResult] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [leaveLoading, setLeaveLoading] = useState(false);
   const [renameLoading, setRenameLoading] = useState(false);
   const toast = useToast();
 
@@ -213,15 +212,40 @@ function UpdateGroupChatModal({ fetchMessages }) {
   };
 
   const handleSubmit = async () => {
-    return toast({
-      position: 'top',
-      title: 'Coming soon',
-      description:
-        'This feature is yet to come. Until then you cannot leave a group 🙂',
-      status: 'info',
-      duration: 5000,
-      isClosable: true,
-    });
+    try {
+      setLeaveLoading(true);
+      const body = {
+        chatId: selectedChat._id,
+        userId: currentUser.id,
+      };
+      setLeaveLoading(true);
+      const response = await axios.post('/api/chat/groupremove', body);
+      const { data } = response.data;
+      setFetchFlag((prev) => {
+        return !prev;
+      });
+      setLeaveLoading(false);
+      toast({
+        position: 'top',
+        title: 'Success',
+        description: `You left ${data.chatName}`,
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
+      setSelectedChat(null);
+    } catch (error) {
+      const { message } = error.response.data;
+      setLeaveLoading(false);
+      return toast({
+        position: 'top',
+        title: 'Error occured',
+        description: message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   return (
@@ -302,7 +326,11 @@ function UpdateGroupChatModal({ fetchMessages }) {
             )}
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme='red' onClick={handleSubmit}>
+            <Button
+              isLoading={leaveLoading}
+              colorScheme='red'
+              onClick={handleSubmit}
+            >
               Leave group
             </Button>
           </ModalFooter>
