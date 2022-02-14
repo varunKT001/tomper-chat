@@ -148,8 +148,13 @@ function SingleChat() {
   }, []);
 
   useEffect(() => {
+    if (selectedChatBackup) {
+      socket.emit('leave_room', selectedChatBackup._id);
+    }
     fetchMessages();
     selectedChatBackup = selectedChat;
+    setTyping(false);
+    setIsTyping(false);
   }, [selectedChat]);
 
   return (

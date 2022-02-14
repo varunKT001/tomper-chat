@@ -24,6 +24,9 @@ exports.handleJoinChat = (socket) => {
     socket.emit('user_online_status', online);
     socket.to(room).emit('user_online_status', online);
   });
+  socket.on('leave_room', (room) => {
+    socket.leave(room);
+  });
 };
 
 exports.handleMessage = (socket) => {
