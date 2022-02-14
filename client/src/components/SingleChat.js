@@ -123,7 +123,12 @@ function SingleChat() {
   };
 
   useEffect(() => {
-    socket = io('https://tomper-chat.herokuapp.com');
+    console.log(process.env.NODE_ENV);
+    socket = io(
+      process.env.NODE_ENV !== 'production'
+        ? 'http://localhost:5000'
+        : 'https://tomper-chat.herokuapp.com'
+    );
     socket.emit('setup', currentUser);
     socket.on('connected', () => setSocketConnected(true));
     socket.on('user_online_status', (online) => setOnlineStatus(online));
