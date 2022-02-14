@@ -123,7 +123,6 @@ function SingleChat() {
   };
 
   useEffect(() => {
-    console.log(process.env.NODE_ENV);
     socket = io(
       process.env.NODE_ENV !== 'production'
         ? 'http://localhost:5000'
