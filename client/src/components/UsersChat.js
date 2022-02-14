@@ -24,7 +24,7 @@ function UsersChat() {
       bg='white'
       overflowY='scroll'
     >
-      {!chats ? (
+      {chats.length === 0 ? (
         <SkeletonLoader length='10' height='50px' mt='4' />
       ) : (
         <VStack w='100%' spacing='0'>
