@@ -9,7 +9,7 @@ export const ChatProvider = ({ children }) => {
   const { currentUser } = useUserContext();
   const toast = useToast();
   const [chats, setChats] = useState([]);
-  const [selectedChat, setSelectedChat] = useState();
+  const [selectedChat, setSelectedChat] = useState(null);
   const [notification, setNotification] = useState([]);
   const [fetchFlag, setFetchFlag] = useState(false);
 

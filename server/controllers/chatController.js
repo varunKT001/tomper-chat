@@ -86,6 +86,16 @@ exports.createGroupChat = CatchAsyncErrors(async (req, res, next) => {
 
 exports.renameGroup = CatchAsyncErrors(async (req, res, next) => {
   const { chatId, chatName } = req.body;
+  const group = await Chat.findById(chatId);
+  console.log(group.groupAdmin);
+  if (group.groupAdmin._id.toString() !== req.user._id.toString()) {
+    return next(
+      new ErrorHandler(
+        'Only group admins can change the name of the group',
+        401
+      )
+    );
+  }
   const updatedChat = await Chat.findByIdAndUpdate(
     chatId,
     {
@@ -104,6 +114,12 @@ exports.renameGroup = CatchAsyncErrors(async (req, res, next) => {
 
 exports.addToGroup = CatchAsyncErrors(async (req, res, next) => {
   const { chatId, userId } = req.body;
+  const group = await Chat.findById(chatId);
+  if (group.groupAdmin._id.toString() !== req.user._id.toString()) {
+    return next(
+      new ErrorHandler('Only group admins can add/remove someone', 401)
+    );
+  }
   const updatedGroup = await Chat.findByIdAndUpdate(
     chatId,
     {
@@ -126,6 +142,15 @@ exports.addToGroup = CatchAsyncErrors(async (req, res, next) => {
 
 exports.removeFromGroup = CatchAsyncErrors(async (req, res, next) => {
   const { chatId, userId } = req.body;
+  const group = await Chat.findById(chatId);
+  if (
+    group.groupAdmin._id.toString() !== req.user._id.toString() &&
+    userId.toString() !== req.user._id.toString()
+  ) {
+    return next(
+      new ErrorHandler('Only group admins can add/remove someone', 401)
+    );
+  }
   const updatedGroup = await Chat.findByIdAndUpdate(
     chatId,
     {

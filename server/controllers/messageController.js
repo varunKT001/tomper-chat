@@ -6,6 +6,13 @@ const Chat = require('../models/chatModel');
 
 exports.sendSingleMessage = CatchAsyncErrors(async (req, res, next) => {
   const { content, chatId } = req.body;
+  const chat = await Chat.findById(chatId);
+  const chatUsers = chat.users.map((user) => user.toString());
+  if (!chatUsers.includes(req.user._id.toString())) {
+    return next(
+      new ErrorHandler('Cannot message in the chats you are not part of', 401)
+    );
+  }
   if (!content || !chatId) {
     return next(new ErrorHandler('Missing fields', 400));
   }
@@ -30,6 +37,13 @@ exports.sendSingleMessage = CatchAsyncErrors(async (req, res, next) => {
 });
 
 exports.sendAllMessage = CatchAsyncErrors(async (req, res, next) => {
+  const chat = await Chat.findById(req.params.id);
+  const chatUsers = chat.users.map((user) => user.toString());
+  if (!chatUsers.includes(req.user._id.toString())) {
+    return next(
+      new ErrorHandler('Cannot get messages of chats you are not part of', 401)
+    );
+  }
   const messages = await Message.find({ chat: req.params.id })
     .populate('sender')
     .populate('chat');
