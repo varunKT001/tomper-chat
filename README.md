@@ -1,5 +1,5 @@
 <p align='center'>
-<img src='./client/public/logo192.png'  width='25%'>
+<img src='./client/src/assets/logo.svg'  width='25%'>
 </p>
 <p align='center'>
 <b>WhatsApp clone build using MERN stack</b>
