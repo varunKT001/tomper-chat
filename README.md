@@ -5,13 +5,13 @@
 <b>WhatsApp clone build using MERN stack</b>
 </p>
 <p align='center'>
-<a href='https://tomper-chat.herokuapp.com/' target='_blank'>tomper-chat.herokuapp.com</a>
+<a href='https://tomper-chat.onrender.com/' target='_blank'>tomper-chat.onrender.com</a>
 </p>
 
 ---
 
 <p align='center'>
-This is the frontend + backend of TomperChat build with MERN stack and hosted with <a href='https://www.heroku.com/' target='_blank'>Heroku</a>
+This is the frontend + backend of TomperChat build with MERN stack and hosted with <a href='https://www.render.com/' target='_blank'>Render</a>
 </p>
 <p align='center'>
 <img src='./assets/dp1.PNG' >
