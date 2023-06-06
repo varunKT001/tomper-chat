@@ -4,7 +4,8 @@
   "description": "Chatting application created using MERN.",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server/server.js",
+    "dev": "nodemon server/server.js",
+    "start": "node server/server.js",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
   },
   "author": "Varun Tiwari",
