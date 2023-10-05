@@ -31,15 +31,26 @@ exports.handleJoinChat = (socket) => {
 
 exports.handleMessage = (socket) => {
   socket.on('new_message', (message) => {
-    let chat = message.chat;
-    if (!chat.users) {
-      return console.log('no users');
+    const { chat, sender } = message;
+
+    // Ensure the message and chat have necessary properties
+    if (!chat || !chat.users || !sender) {
+      console.log('Invalid message format');
+      return;
     }
-    chat.users.forEach((user) => {
-      if (user._id === message.sender._id) {
-        return;
+
+    // Use Set to store unique user IDs
+    const recipientUserIds = new Set(chat.users.map((user) => user._id));
+
+    // Remove the sender's ID from the recipients
+    recipientUserIds.delete(sender._id);
+
+    // Broadcast the message to all recipients
+    recipientUserIds.forEach((userId) => {
+      // Check if the user is connected before emitting the message
+      if (connectedUsers.has(userId)) {
+        socket.to(userId).emit('new_message_received', message);
       }
-      socket.to(user._id).emit('new_message_recieved', message);
     });
   });
 };
