@@ -35,22 +35,23 @@ exports.handleMessage = (socket) => {
 
     // Ensure the message and chat have necessary properties
     if (!chat || !chat.users || !sender) {
-      console.log('Invalid message format');
-      return;
+    console.log('Invalid message format');
+     return;
+    }
+    const recipientUserIds = Array.from(new Set(chat.users.map((user) => user._id)));
+    
+    const senderIndex = recipientUserIds.indexOf(sender._id);
+
+    if (senderIndex !== -1) {
+     recipientUserIds.splice(senderIndex, 1);
     }
 
-    // Use Set to store unique user IDs
-    const recipientUserIds = new Set(chat.users.map((user) => user._id));
-
-    // Remove the sender's ID from the recipients
-    recipientUserIds.delete(sender._id);
-
-    // Broadcast the message to all recipients
-    recipientUserIds.forEach((userId) => {
-      // Check if the user is connected before emitting the message
-      if (connectedUsers.has(userId)) {
-        socket.to(userId).emit('new_message_received', message);
-      }
+     // Broadcast the message to all recipients
+     recipientUserIds.forEach((user_id)=>{
+     // Check if the user is connected before emitting the message
+     if(connectedUsers.includes(user_id)){
+     socket.to(user_id).emit('new_message_received', message);
+    }
     });
   });
 };
