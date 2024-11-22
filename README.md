@@ -92,13 +92,19 @@ TomperChat is a clone of WhatsApp. Its build using MERN stack and uses <a href='
    FRONTEND_URL=http://localhost:3000
    ```
 
-5. Start the express server using :
+5. Create a .env file inside the client folder and provide the following environment variables:
+
+   ```env
+   REACT_APP_PROJECT_URL=http://localhost:5000
+   ```
+
+6. Start the express server using :
 
    ```javascript
    npm start
    ```
 
-6. Start the react development server using:
+7. Start the react development server using:
 
    ```javascrip
    cd client

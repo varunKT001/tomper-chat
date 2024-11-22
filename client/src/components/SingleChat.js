@@ -126,7 +126,7 @@ function SingleChat() {
     socket = io(
       process.env.NODE_ENV !== 'production'
         ? 'http://localhost:5000'
-        : 'https://tomper-chat.onrender.com'
+        : process.env.REACT_APP_PROJECT_URL
     );
     socket.emit('setup', currentUser);
     socket.on('connected', () => setSocketConnected(true));
