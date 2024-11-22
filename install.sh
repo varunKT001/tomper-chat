@@ -2,13 +2,10 @@
 
 set -e  # Exit on any error
 
-echo "Installing pnpm using npm..."
-npm install -g pnpm
-
 echo "Installing root modules with verbose output..."
-pnpm install
+NPM_CONFIG_PRODUCTION=true npm install --legacy-peer-deps --verbose
 
 echo "Installing client modules with verbose output..."
-pnpm --dir client install
+NPM_CONFIG_PRODUCTION=true npm install --legacy-peer-deps --verbose --prefix client
 
 echo "Modules installation and cache cleanup completed!"
