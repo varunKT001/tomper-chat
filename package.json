@@ -6,9 +6,6 @@
   "scripts": {
     "dev": "nodemon server/server.js",
     "start": "node server/server.js",
-    "install:c": "npm install --verbose --prefix client",
-    "install:s": "npm install --verbose",
-    "installall": "npm run install:*",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
   },
   "author": "Varun Tiwari",
